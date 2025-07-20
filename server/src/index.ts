@@ -7,6 +7,8 @@ import morgan from "morgan";
 import * as dynamoose from "dynamoose";
 
 // routes
+import courseRoutes from "./routes/courseRoutes";
+
 // configurations
 dotenv.config();
 const isProduction = process.env.NODE_ENV === "production";
@@ -23,9 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 // routes
-app.use("/", (req, res) => {
-  res.send("Hello, World!");
-});
+app.use("/api/v1/courses", courseRoutes);
 
 // server setup
 const PORT = process.env.PORT || 3000;
