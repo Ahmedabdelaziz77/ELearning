@@ -3,13 +3,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { useCarousel } from "@/app/hooks/useCarousel";
+import { useCarousel } from "@/hooks/useCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAllCoursesQuery } from "@/state/api";
 import CourseCardSerach from "@/components/CourseCardSerach";
 import { useRouter } from "next/navigation";
-
+import { useUser } from "@clerk/nextjs";
 const LoadingSkeleton = () => {
+  const { user } = useUser();
+
   return (
     <div className="landing-skeleton">
       <div className="landing-skeleton__hero">
