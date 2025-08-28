@@ -72,11 +72,34 @@ export const api = createApi({
       query: (courseId) => `api/v1/courses/${courseId}`,
       providesTags: (result, error, id) => [{ type: "Courses", id }],
     }),
+    getAllTransactions: build.query<Transaction[], string>({
+      query: (userId) => `api/v1/transactions?userId=${userId}`,
+    }),
+    createStripePaymentIntent: build.mutation<
+      { clientSecret: string },
+      { amount: number }
+    >({
+      query: ({ amount }) => ({
+        url: "api/v1/transactions/stripe/payment-intent",
+        method: "POST",
+        body: { amount },
+      }),
+    }),
+    createTransaction: build.mutation<Transaction, Partial<Transaction>>({
+      query: (data) => ({
+        url: "api/v1/transactions",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
 export const {
   useGetAllCoursesQuery,
   useGetCourseQuery,
+  useGetAllTransactionsQuery,
   useUpdateUserMutation,
+  useCreateTransactionMutation,
+  useCreateStripePaymentIntentMutation,
 } = api;

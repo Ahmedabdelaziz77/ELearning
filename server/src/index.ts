@@ -13,6 +13,7 @@ import {
 
 // routes
 import courseRoutes from "./routes/courseRoutes";
+import transactionRoutes from "./routes/transactionRoutes";
 import userClerkRoutes from "./routes/userClerkRoutes";
 
 // configurations
@@ -38,9 +39,10 @@ app.use(clerkMiddleware());
 // routes
 app.use("/api/v1/courses", courseRoutes);
 app.use("/api/v1/users/clerk", requireAuth(), userClerkRoutes);
+app.use("/api/v1/transactions", requireAuth(), transactionRoutes);
 
 // server setup
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8001;
 if (!isProduction)
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

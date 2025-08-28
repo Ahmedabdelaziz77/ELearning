@@ -1,26 +1,26 @@
 "use client";
 import React from "react";
-import { SignIn, useUser } from "@clerk/nextjs";
+import { SignUp, useUser } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { useSearchParams } from "next/navigation";
-export default function Signin() {
+export default function Signup() {
   const searchParams = useSearchParams();
   const { user } = useUser();
   const isChecoutPage = searchParams.get("showSignUp") !== null;
   const courseId = searchParams.get("id");
 
-  const signUpUrl = isChecoutPage
-    ? `/checkout?step=1&id=${courseId}&showSignUp=true`
-    : "/signup";
+  const signInUrl = isChecoutPage
+    ? `/checkout?step=1&id=${courseId}&showSignUp=false`
+    : "/signin";
   const getRedirectUrl = () => {
     if (isChecoutPage) {
-      return `/checkout?step=2&id=${courseId}&showSignUp=true`;
+      return `/checkout?step=2&id=${courseId}&showSignUp=false`;
     }
     const userType = user?.publicMetadata?.userType as string;
     return userType === "student" ? "/user/courses" : "/teacher/courses";
   };
   return (
-    <SignIn
+    <SignUp
       appearance={{
         baseTheme: dark,
         elements: {
@@ -41,10 +41,10 @@ export default function Signin() {
           footerActionLink: "text-primary-750 hover:text-primary-600",
         },
       }}
-      signUpUrl={signUpUrl}
+      signInUrl={signInUrl}
       forceRedirectUrl={getRedirectUrl()}
       routing="hash"
-      afterSignOutUrl="/"
+      afterSignUpUrl="/"
     />
   );
 }

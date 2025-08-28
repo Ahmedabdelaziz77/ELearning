@@ -1,4 +1,4 @@
-import Signup from "@/components/ui/Signup";
+import Signup from "@/components/Signup";
 import React from "react";
 
 export default function Page() {
