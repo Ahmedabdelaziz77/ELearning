@@ -53,6 +53,7 @@ export const api = createApi({
   reducerPath: "api",
   tagTypes: ["Courses", "Users"],
   endpoints: (build) => ({
+    // user clerk
     updateUser: build.mutation<User, Partial<User> & { userId: string }>({
       query: ({ userId, ...updatedUser }) => ({
         url: `api/v1/users/clerk/${userId}`,
@@ -61,6 +62,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+    // courses
     getAllCourses: build.query<Course[], { category?: string }>({
       query: ({ category }) => ({
         url: "api/v1/courses",
@@ -72,6 +74,40 @@ export const api = createApi({
       query: (courseId) => `api/v1/courses/${courseId}`,
       providesTags: (result, error, id) => [{ type: "Courses", id }],
     }),
+    createCourse: build.mutation<
+      Course,
+      { teacherId: string; teacherName: string }
+    >({
+      query: ({ teacherId, teacherName }) => ({
+        url: `api/v1/courses`,
+        method: "POST",
+        body: { teacherId, teacherName },
+      }),
+      invalidatesTags: ["Courses"],
+    }),
+    updateCourse: build.mutation<
+      Course,
+      { courseId: string; formData: FormData }
+    >({
+      query: ({ courseId, formData }) => ({
+        url: `api/v1/courses/${courseId}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: (result, error, { courseId }) => [
+        {
+          type: "Courses",
+          id: courseId,
+        },
+      ],
+    }),
+    deleteCourse: build.mutation<Course, string>({
+      query: (courseId) => ({
+        url: `api/v1/courses/${courseId}`,
+        method: "DELETE",
+      }),
+    }),
+    // transactions
     getAllTransactions: build.query<Transaction[], string>({
       query: (userId) => `api/v1/transactions?userId=${userId}`,
     }),
@@ -100,6 +136,9 @@ export const {
   useGetCourseQuery,
   useGetAllTransactionsQuery,
   useUpdateUserMutation,
+  useUpdateCourseMutation,
+  useCreateCourseMutation,
   useCreateTransactionMutation,
   useCreateStripePaymentIntentMutation,
+  useDeleteCourseMutation,
 } = api;
