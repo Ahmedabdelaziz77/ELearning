@@ -15,6 +15,7 @@ import {
 import courseRoutes from "./routes/courseRoutes";
 import transactionRoutes from "./routes/transactionRoutes";
 import userClerkRoutes from "./routes/userClerkRoutes";
+import userCourseProgressRoutes from "./routes/userCourseProgressRoutes";
 
 // configurations
 dotenv.config();
@@ -40,6 +41,11 @@ app.use(clerkMiddleware());
 app.use("/api/v1/courses", courseRoutes);
 app.use("/api/v1/users/clerk", requireAuth(), userClerkRoutes);
 app.use("/api/v1/transactions", requireAuth(), transactionRoutes);
+app.use(
+  "/api/v1/users/course-progress",
+  requireAuth(),
+  userCourseProgressRoutes
+);
 
 // server setup
 const PORT = process.env.PORT || 8001;

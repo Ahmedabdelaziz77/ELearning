@@ -683,7 +683,7 @@ input[type="color"] {
 }
 
 .course__instructor-card {
-  @apply w-1/3 h-min border-none bg-white-50/5 p-10 bg-customgreys-secondarybg;
+  @apply w-1/3 h-min border-none  p-10 bg-customgreys-secondarybg;
 }
 
 .course__instructor-info {
@@ -711,11 +711,11 @@ input[type="color"] {
 }
 
 .course__instructor-title {
-  @apply text-sm;
+  @apply text-sm text-white-50;
 }
 
 .course__instructor-bio {
-  @apply text-sm;
+  @apply text-sm text-white-100;
 }
 
 /* Chapters Sidebar */
@@ -991,7 +991,7 @@ input[type="color"] {
 
 /* Course Card */
 .course-card {
-  @apply flex flex-col w-full h-[340px] xl:h-[380px] border-none bg-customgreys-primarybg overflow-hidden cursor-pointer hover:bg-white-100/10 transition duration-200;
+  @apply flex flex-col w-full h-[340px] xl:h-[380px] text-white-100 border-none bg-customgreys-primarybg overflow-hidden cursor-pointer hover:bg-white-100/10 transition duration-200;
 }
 
 .course-card__header {
@@ -1007,7 +1007,7 @@ input[type="color"] {
 }
 
 .course-card__title {
-  @apply text-md lg:text-lg font-semibold line-clamp-2;
+  @apply text-md font-semibold line-clamp-2;
 }
 
 .course-card__footer {
