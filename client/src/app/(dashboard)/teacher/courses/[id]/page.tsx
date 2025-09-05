@@ -1,5 +1,9 @@
 "use client";
-import { useGetCourseQuery, useUpdateCourseMutation } from "@/state/api";
+import {
+  useGetCourseQuery,
+  useUpdateCourseMutation,
+  useGetUploadVideoUrlMutation,
+} from "@/state/api";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/state/redux";
@@ -27,6 +31,7 @@ export default function CourseEditor() {
   const id = params.id as string;
   const { data: course, isLoading, refetch } = useGetCourseQuery(id);
   const [updateCourse] = useUpdateCourseMutation();
+  const [getUploadVideoUrl] = useGetUploadVideoUrlMutation();
 
   const dispatch = useAppDispatch();
   const { sections } = useAppSelector((state) => state.global.courseEditor);
@@ -55,12 +60,16 @@ export default function CourseEditor() {
 
   const onSubmit = async (data: CourseFormData) => {
     try {
-      const formData = createCourseFormData(data, sections);
-      const updatedCourse = await updateCourse({
+      const updatedSections = await uploadAllVideos(
+        sections,
+        id,
+        getUploadVideoUrl
+      );
+      const formData = createCourseFormData(data, updatedSections);
+      await updateCourse({
         courseId: id,
         formData,
       }).unwrap();
-      //   await uploadAllVideos(sections, updatedCourse.sections, id, uploadVideo);
       refetch();
     } catch (err) {
       console.error("Failed to update a course", err);

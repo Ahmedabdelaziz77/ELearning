@@ -47,7 +47,7 @@ export default function Landing() {
   if (isLoading) return <LoadingSkeleton />;
 
   const handleCourseClick = (courseId: string) => {
-    router.push(`/search?id=${courseId}`);
+    router.push(`/search?id=${courseId}`, { scroll: false });
   };
   return (
     <motion.div
@@ -69,7 +69,7 @@ export default function Landing() {
             Courses when you need and want them.
           </p>
           <div className="landing__cta">
-            <Link href="/search">
+            <Link href="/search" scroll={false}>
               <div className="landing__cta-button">Search for courses</div>
             </Link>
           </div>

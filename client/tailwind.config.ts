@@ -113,66 +113,49 @@ const config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        // 👇 custom dialog animations
+        "slide-in-top-48": {
+          from: { transform: "translateY(-48%)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
+        "slide-out-top-48": {
+          from: { transform: "translateY(0)", opacity: "1" },
+          to: { transform: "translateY(-48%)", opacity: "0" },
+        },
+        "slide-in-left-50": {
+          from: { transform: "translateX(-50%)", opacity: "0" },
+          to: { transform: "translateX(0)", opacity: "1" },
+        },
+        "slide-out-left-50": {
+          from: { transform: "translateX(0)", opacity: "1" },
+          to: { transform: "translateX(-50%)", opacity: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "slide-in-top-48": "slide-in-top-48 0.2s ease-out",
+        "slide-out-top-48": "slide-out-top-48 0.2s ease-in",
+        "slide-in-left-50": "slide-in-left-50 0.2s ease-out",
+        "slide-out-left-50": "slide-out-left-50 0.2s ease-in",
       },
       fontFamily: {
         sans: ["var(--font-dm-sans)"],
       },
       fontSize: {
-        xs: [
-          "0.75rem",
-          {
-            lineHeight: "1rem",
-          },
-        ],
-        sm: [
-          "0.875rem",
-          {
-            lineHeight: "1.25rem",
-          },
-        ],
-        md: [
-          "1rem",
-          {
-            lineHeight: "1.5rem",
-          },
-        ],
-        lg: [
-          "1.125rem",
-          {
-            lineHeight: "1.75rem",
-          },
-        ],
-        xl: [
-          "1.25rem",
-          {
-            lineHeight: "1.75rem",
-          },
-        ],
-        "2xl": [
-          "1.5rem",
-          {
-            lineHeight: "2rem",
-          },
-        ],
+        xs: ["0.75rem", { lineHeight: "1rem" }],
+        sm: ["0.875rem", { lineHeight: "1.25rem" }],
+        md: ["1rem", { lineHeight: "1.5rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        xl: ["1.25rem", { lineHeight: "1.75rem" }],
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],
       },
     },
   },
@@ -182,4 +165,5 @@ const config = {
     "prettier-plugin-tailwindcss",
   ],
 } satisfies Config;
+
 export default config;

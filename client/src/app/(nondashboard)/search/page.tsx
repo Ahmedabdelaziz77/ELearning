@@ -27,10 +27,12 @@ export default function Page() {
   if (isError || !courses) return <div>Error loading courses</div>;
   const handleCourseSelect = (course: Course) => {
     setSelectedCourse(course);
-    router.push(`/search?id=${course.courseId}`);
+    router.push(`/search?id=${course.courseId}`, { scroll: false });
   };
   const handleEnrollNow = (courseId: string) => {
-    router.push(`/checkout?step=1&id=${courseId}&showSignUp=false`);
+    router.push(`/checkout?step=1&id=${courseId}&showSignUp=false`, {
+      scroll: false,
+    });
   };
   return (
     <motion.div

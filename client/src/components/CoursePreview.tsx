@@ -10,7 +10,7 @@ export default function CoursePreview({ course }: CoursePreviewProps) {
       <div className="course-preview__container">
         <div className="course-preview__image-wrapper">
           <Image
-            src={course.image || "/course-preview-placeholder.png"}
+            src={course.image || "/placeholder.png"}
             alt="course-preview image"
             width={640}
             height={360}

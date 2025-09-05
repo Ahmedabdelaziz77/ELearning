@@ -1,12 +1,15 @@
 "use client";
 
 import { useRef } from "react";
+import dynamic from "next/dynamic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import ReactPlayer from "react-player";
 import Loading from "@/components/Loading";
 import { useCourseProgressData } from "@/hooks/useCourseProgressData";
+
+// Bypass mismatched local typings + avoid SSR issues
+const Player: any = dynamic(() => import("react-player"), { ssr: false });
 
 const Course = () => {
   const {
@@ -21,11 +24,10 @@ const Course = () => {
     hasMarkedComplete,
     setHasMarkedComplete,
   } = useCourseProgressData();
-  console.log("currentChapter.video:", currentChapter);
 
-  const playerRef = useRef<ReactPlayer>(null);
+  const playerRef = useRef<any>(null);
 
-  const handleProgress = ({ played }: { played: number }) => {
+  const handleProgress = ({ played }: any) => {
     if (
       played >= 0.8 &&
       !hasMarkedComplete &&
@@ -42,6 +44,22 @@ const Course = () => {
       );
     }
   };
+
+  const playerConfig: any = {
+    file: {
+      attributes: {
+        controlsList: "nodownload",
+      },
+    },
+  };
+
+  // Safe avatar source (fixes TS2339 on teacherAvatarUrl)
+  const avatarSrc =
+    (course as any)?.teacherAvatarUrl ??
+    (course as any)?.instructorAvatar ??
+    (course as any)?.teacherImage ??
+    (user as any)?.avatarUrl ??
+    "";
 
   if (isLoading) return <Loading />;
   if (!user) return <div>Please sign in to view this course.</div>;
@@ -63,7 +81,7 @@ const Course = () => {
               <Avatar className="course__avatar">
                 <AvatarImage alt={course.teacherName} />
                 <AvatarFallback className="course__avatar-fallback">
-                  {course.teacherName[0]}
+                  {course.teacherName?.[0] ?? "T"}
                 </AvatarFallback>
               </Avatar>
               <span className="course__instructor-name">
@@ -73,23 +91,17 @@ const Course = () => {
           </div>
         </div>
 
-        <Card className="course__video bg-customgreys-primarybg">
+        <Card className="course__video bg-customgreys-secondarybg">
           <CardContent className="course__video-container">
             {currentChapter?.video ? (
-              <ReactPlayer
+              <Player
                 ref={playerRef}
-                url={currentChapter.video as string}
+                url={String(currentChapter.video)}
                 controls
                 width="100%"
                 height="100%"
                 onProgress={handleProgress}
-                config={{
-                  file: {
-                    attributes: {
-                      controlsList: "nodownload",
-                    },
-                  },
-                }}
+                config={playerConfig}
               />
             ) : (
               <div className="course__no-video">
@@ -100,8 +112,8 @@ const Course = () => {
         </Card>
 
         <div className="course__content">
-          <Tabs defaultValue="Notes" className="course__tabs">
-            <TabsList className="course__tabs-list bg-customgreys-primarybg">
+          <Tabs defaultValue="Notes" className="course__tabs ">
+            <TabsList className="course__tabs-list bg-customgreys-secondarybg">
               <TabsTrigger className="course__tab" value="Notes">
                 Notes
               </TabsTrigger>
@@ -113,12 +125,9 @@ const Course = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent
-              className="course__tab-content bg-customgreys-primarybg"
-              value="Notes"
-            >
-              <Card className="course__tab-card bg-customgreys-primarybg text-white-100">
-                <CardHeader className="course__tab-header">
+            <TabsContent className="course__tab-content" value="Notes">
+              <Card className="course__tab-card bg-customgreys-secondarybg text-white-100">
+                <CardHeader className="course__tab-header ">
                   <CardTitle>Notes Content</CardTitle>
                 </CardHeader>
                 <CardContent className="course__tab-body">
@@ -127,11 +136,8 @@ const Course = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent
-              className="course__tab-content bg-customgreys-primarybg"
-              value="Resources"
-            >
-              <Card className="course__tab-card bg-customgreys-primarybg text-white-100">
+            <TabsContent className="course__tab-content" value="Resources">
+              <Card className="course__tab-card bg-customgreys-secondarybg text-white-100">
                 <CardHeader className="course__tab-header">
                   <CardTitle>Resources Content</CardTitle>
                 </CardHeader>
@@ -141,11 +147,8 @@ const Course = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent
-              className="course__tab-content bg-customgreys-primarybg"
-              value="Quiz"
-            >
-              <Card className="course__tab-card bg-customgreys-primarybg text-white-100">
+            <TabsContent className="course__tab-content" value="Quiz">
+              <Card className="course__tab-card bg-customgreys-secondarybg text-white-100">
                 <CardHeader className="course__tab-header">
                   <CardTitle>Quiz Content</CardTitle>
                 </CardHeader>
@@ -162,7 +165,7 @@ const Course = () => {
                 <Avatar className="course__instructor-avatar">
                   <AvatarImage alt={course.teacherName} />
                   <AvatarFallback className="course__instructor-avatar-fallback">
-                    {course.teacherName[0]}
+                    {course.teacherName?.[0] ?? "T"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="course__instructor-details">

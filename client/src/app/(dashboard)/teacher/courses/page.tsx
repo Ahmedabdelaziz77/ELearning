@@ -37,7 +37,7 @@ export default function Courses() {
     });
   }, [courses, searchTerm, selectedCategory]);
   const handleEdit = (course: Course) => {
-    router.push(`/teacher/courses/${course.courseId}`);
+    router.push(`/teacher/courses/${course.courseId}`, { scroll: false });
   };
   const handleDelete = async (course: Course) => {
     if (window.confirm("Are u sure u want to delete this course ?")) {
@@ -50,7 +50,7 @@ export default function Courses() {
       teacherId: user.id,
       teacherName: user.fullname || "Unknown Teacher",
     }).unwrap();
-    router.push(`/teacher/courses/${res.courseId}`);
+    router.push(`/teacher/courses/${res.courseId}`, { scroll: false });
   };
   if (isLoading) return <Loading />;
   if (isError || !courses) return <div>Error Loading Courses.</div>;

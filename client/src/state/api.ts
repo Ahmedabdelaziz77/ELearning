@@ -107,6 +107,22 @@ export const api = createApi({
         method: "DELETE",
       }),
     }),
+    getUploadVideoUrl: build.mutation<
+      { uploadUrl: string; videoUrl: string },
+      {
+        courseId: string;
+        chapterId: string;
+        sectionId: string;
+        fileName: string;
+        fileType: string;
+      }
+    >({
+      query: ({ courseId, sectionId, chapterId, fileName, fileType }) => ({
+        url: `api/v1/courses/${courseId}/sections/${sectionId}/chapters/${chapterId}/get-upload-url`,
+        method: "POST",
+        body: { fileName, fileType },
+      }),
+    }),
     // transactions
     getAllTransactions: build.query<Transaction[], string>({
       query: (userId) => `api/v1/transactions?userId=${userId}`,
@@ -192,6 +208,7 @@ export const {
   useGetAllTransactionsQuery,
   useGetUserCourseProgressQuery,
   useGetUserEnrolledCoursesQuery,
+  useGetUploadVideoUrlMutation,
   useUpdateUserMutation,
   useUpdateCourseMutation,
   useUpdateUserCourseProgressMutation,
