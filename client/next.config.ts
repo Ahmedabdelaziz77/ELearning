@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Proxy all /api/* calls to your AWS API Gateway
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination:
+          "https://93m0onrfyi.execute-api.us-east-1.amazonaws.com/prod/api/:path*",
+      },
+    ];
+  },
+
   images: {
     remotePatterns: [
       {
@@ -10,7 +21,6 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    // domains: ["images.pexels.com"],
   },
 };
 

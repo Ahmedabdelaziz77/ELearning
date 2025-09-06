@@ -30,18 +30,23 @@ export const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY || "",
 });
 
-const allowedOrigins = [
-  "https://e-learning-45j2.vercel.app",
-  "http://localhost:3000",
-];
+const app = express();
 
+app.use(express.json());
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("common"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+/**
+ * Allow ALL origins by reflecting the request Origin (works with credentials).
+ * NOTE: You cannot use "*" when credentials=true — this is the correct approach.
+ */
 const corsOptions: cors.CorsOptions = {
-  origin(origin, cb) {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error("Not allowed by CORS"));
-  },
+  origin: (_origin, cb) => cb(null, true), // reflect any origin
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
@@ -50,22 +55,25 @@ const corsOptions: cors.CorsOptions = {
   ],
 };
 
-const app = express();
-
-app.use(express.json());
-app.use(helmet());
-
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(morgan("common"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(cors(corsOptions));
-
 app.options("*", cors(corsOptions));
 
+/** Ensure every response has proper CORS when there is an Origin */
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    // important for caches/proxies/CDN to vary by Origin
+    res.setHeader("Vary", "Origin");
+  }
+  next();
+});
+
+// Auth middleware
 app.use(clerkMiddleware());
 
+// Routes
 app.use("/api/v1/courses", courseRoutes);
 app.use("/api/v1/users/clerk", requireAuth(), userClerkRoutes);
 app.use("/api/v1/transactions", requireAuth(), transactionRoutes);
@@ -75,15 +83,12 @@ app.use(
   userCourseProgressRoutes
 );
 
+// 404 with CORS
 app.use((req, res) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.set("Access-Control-Allow-Origin", origin);
-    res.set("Access-Control-Allow-Credentials", "true");
-  }
   res.status(404).json({ message: "Not Found" });
 });
 
+// Error handler with CORS
 app.use(
   (
     err: any,
@@ -91,17 +96,13 @@ app.use(
     res: express.Response,
     _next: express.NextFunction
   ) => {
-    const origin = req.headers.origin;
-    if (origin && allowedOrigins.includes(origin)) {
-      res.set("Access-Control-Allow-Origin", origin);
-      res.set("Access-Control-Allow-Credentials", "true");
-    }
     const status =
       err?.status || (err?.message === "Not allowed by CORS" ? 403 : 500);
     res.status(status).json({ error: err?.message || "Server error" });
   }
 );
 
+// Local dev server
 const PORT = process.env.PORT || 8001;
 if (!isProduction) {
   app.listen(PORT, () => {
@@ -109,16 +110,22 @@ if (!isProduction) {
   });
 }
 
+// Lambda handler
 const serverlessApp = serverless(app);
 
 export const handler = async (event: any, context: any) => {
   if (event?.action === "seed") {
     await seed();
+    const origin =
+      event?.headers?.origin ||
+      event?.headers?.Origin ||
+      "https://e-learning-45j2.vercel.app";
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "https://e-learning-45j2.vercel.app",
+        "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Credentials": "true",
+        Vary: "Origin",
       },
       body: JSON.stringify({ message: "Database seeded successfully" }),
     };
