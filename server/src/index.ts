@@ -48,7 +48,6 @@ app.use(
   requireAuth(),
   userCourseProgressRoutes
 );
-
 // server setup
 const PORT = process.env.PORT || 8001;
 if (!isProduction)
